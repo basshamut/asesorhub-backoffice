@@ -17,6 +17,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public AuthDto loadUserByUsername(String username) {
+        //TODO enchufar aqui Auth0
         final Set<String> authorities = new HashSet<>();
 
         var user = userRepository.findByEmail(username);

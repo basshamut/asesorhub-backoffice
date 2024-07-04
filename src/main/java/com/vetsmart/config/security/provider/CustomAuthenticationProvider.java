@@ -43,11 +43,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         checkIfNumberOfPossibleAttemptsReached(attemps);
 
-//        var user = AuthDto.builder().username("test")
-//                .password("JDJhJDEwJGtoQmg0cE9FSHpJS0M3VTZNc1A5dmUyTU9hYkpFTFpzS0N3dG9YWkUyRDVzNFBJakRYdVdt")
-//                .authoritiesInString(List.of("ROLE_ADMIN"))
-//                .build(); //TODO enchufar aqui la operacion de carga de usuario
-
         var user = userService.loadUserByUsername(username);
 
         if (user != null) {
