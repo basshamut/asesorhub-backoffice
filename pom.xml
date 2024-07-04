@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.demo</groupId>
-    <artifactId>springboot-ships-backoffice</artifactId>
+    <artifactId>vetsmart-backoffice</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
