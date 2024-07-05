@@ -34,6 +34,7 @@ public class SecurityConfig {
     private CustomAuthenticationProvider customAuthenticationProvider;
 
     private final String[] WHITE_LIST = {
+            "/**",
             "/swagger*/**",
             "/v3/api-docs/**",
             "/console/**",
@@ -54,13 +55,12 @@ public class SecurityConfig {
                     } catch (Exception e) {
                         throw new RuntimeException("Failed to configure MVC request matchers", e);
                     }
-                    // Add AntPathRequestMatcher for other endpoints
-                    auth.requestMatchers(new AntPathRequestMatcher("/console/**")).permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilter(getJwtAuthorizationFilter())
         ;
+        http.headers().frameOptions().disable(); // Allow H2 console (if needed for development)
         return http.build();
     }
 

@@ -6,25 +6,31 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "SPACE_SHIPS")
+@Table(name = "owners")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MovieSpaceShip {
+public class Owner {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long ownerId;
 
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(name = "movie", nullable = false, length = 100)
-    private String movie;
+    @Column(length = 15)
+    private String phone;
 
+    @Column(length = 100)
+    private String email;
+
+    @Column(columnDefinition = "TEXT")
+    private String address;
 }
+

@@ -1,16 +1,17 @@
 package com.vetsmart.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class MovieSpaceShipsDto {
-    private int id;
+@AllArgsConstructor
+public class OwnerRequestDto {
+
     private String name;
-    private String movie;
+    private String phone;
+    private String email;
+    private String address;
 }
+
