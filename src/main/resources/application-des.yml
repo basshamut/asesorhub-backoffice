@@ -17,8 +17,8 @@ spring:
     show-sql: true
   h2:
     console:
-      enabled: true
-      path: /console
+      enabled: false
+#      path: /console
   flyway:
     enabled: true
     locations: classpath:/migrations
