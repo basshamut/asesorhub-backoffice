@@ -1,7 +1,7 @@
 package com.vetsmart.utils;
 
 public class Constants {
-    public static final String API_VERSION_PATH = "/v1";
+    public static final String API_VERSION_PATH = "/api/v1";
 
     //Auth
     public static final String AUTH_PATH = "/auth";

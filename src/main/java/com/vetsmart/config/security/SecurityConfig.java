@@ -42,7 +42,7 @@ public class SecurityConfig {
             API_VERSION_PATH + LOGIN_PATH
     };
 
-    // Configuring HttpSecurity
+    // Configuring HttpSecurity //TODO revisar autenticacion
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
