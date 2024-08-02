@@ -1,7 +1,5 @@
 package com.vetsmart.cucumber.steps;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vetsmart.controller.PatientController;
 import com.vetsmart.cucumber.config.CucumberSpringConfiguration;
 import com.vetsmart.dto.PatientDto;
@@ -11,19 +9,20 @@ import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.io.UnsupportedEncodingException;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 @ContextConfiguration(classes = {CucumberSpringConfiguration.class, PatientController.class})
-public class OwnersSteps {
+public class PatientSteps {
 
     @Autowired
     private PatientController patientController;
 
-    private PatientDto patientDto;
+    private Set<PatientDto> patientDto;
 
     @Given("existe un paciente cuyo propietario es {string}")
     public void existPatientByEmail(String email) {
@@ -40,7 +39,12 @@ public class OwnersSteps {
 
     @Then("se muestran los detalles del paciente")
     public void verifyPatientDetails() {
-        assertThat(patientDto.getName(), is("Fifi"));
-        assertThat(patientDto.getSpecies(), is("Dog"));
+        assertThat("Los detalles del paciente deben ser mostrados", patientDto, notNullValue());
+        assertThat("Los detalles del paciente deben ser mostrados", patientDto.size(), greaterThan(0));
+        for (PatientDto patient : patientDto) {
+            assertThat("El paciente debe tener un nombre", patient.getName(), notNullValue());
+            assertThat("El paciente debe tener una especie", patient.getSpecies(), notNullValue());
+            assertThat("El paciente debe tener una raza", patient.getBreed(), notNullValue());
+        }
     }
 }

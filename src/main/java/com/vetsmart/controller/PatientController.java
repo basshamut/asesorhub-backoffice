@@ -3,6 +3,7 @@ package com.vetsmart.controller;
 import com.vetsmart.dto.OwnerRequestDto;
 import com.vetsmart.dto.PatientDto;
 import com.vetsmart.dto.PatientResponseDto;
+import com.vetsmart.exception.ServiceException;
 import com.vetsmart.persistance.repository.Owner;
 import com.vetsmart.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/patients")
@@ -26,7 +28,12 @@ public class PatientController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<PatientDto>> getPatients(Pageable pageable) {
+    public ResponseEntity<Page<PatientDto>> getPatients(@RequestParam int page, @RequestParam int size) {
+        if (!isValidPagination(page, size)) {
+            throw new ServiceException("Invalid pagination parameters", HttpStatus.BAD_REQUEST.value());
+        }
+
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
         Page<PatientDto> owners = patientService.getPatients(pageable);
         return new ResponseEntity<>(owners, HttpStatus.OK);
     }
@@ -41,10 +48,10 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/owner/{email}")
-    public ResponseEntity<PatientDto> findByEmail(@PathVariable String email) {
+    @GetMapping("/owners/{email}")
+    public ResponseEntity<Set<PatientDto>> findByEmail(@PathVariable String email) {
         try {
-            PatientDto owner = patientService.getPatientByEmail(email);
+            var owner = patientService.getPatientByEmail(email);
             return new ResponseEntity<>(owner, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -68,5 +75,9 @@ public class PatientController {
     public ResponseEntity<Void> deleteOwner(@PathVariable String id) {
         patientService.deletePatient(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    private static boolean isValidPagination(int page, int size) {
+        return page >= 0 && size > 0;
     }
 }

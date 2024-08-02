@@ -1,20 +1,18 @@
 package com.vetsmart.service;
 
-import com.vetsmart.dto.OwnerRequestDto;
 import com.vetsmart.dto.PatientDto;
-import com.vetsmart.dto.PatientResponseDto;
 import com.vetsmart.exception.ServiceException;
-import com.vetsmart.persistance.repository.Owner;
 import com.vetsmart.persistance.repository.Patient;
 import com.vetsmart.persistance.repository.PatientRepository;
 import com.vetsmart.service.mapper.PatientMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,11 +30,17 @@ public class PatientService {
     public PatientDto getPatientById(String ownerId) {
         return patientRepository.findById(ownerId)
                 .map(PatientMapper.MAPPER::toPatientDTO)
-                .orElseThrow(() -> new RuntimeException("Owner not found"));
+                .orElseThrow(() -> new ServiceException("Patient not found", 404));
     }
 
-    public PatientDto getPatientByEmail(String email) {
-        return PatientMapper.MAPPER.toPatientDTO(patientRepository.findByOwnerEmail(email));
+    public Set<PatientDto> getPatientByEmail(String email) {
+        var patients = patientRepository.findPatientByOwnerEmail(email);
+        if (patients.isEmpty()) {
+            throw new ServiceException("Patient not found", 404);
+        }
+        return patients.stream()
+                .map(PatientMapper.MAPPER::toPatientDTO)
+                .collect(Collectors.toSet());
     }
 
     public PatientDto createPatient(PatientDto dto) {
@@ -69,6 +73,7 @@ public class PatientService {
             return PatientMapper.MAPPER.toPatientDTO(updated);
         });
     }
+
     public void deletePatient(String id) {
         patientRepository.deleteById(id);
     }
