@@ -2,7 +2,7 @@ package com.vetsmart.service;
 
 import lombok.AllArgsConstructor;
 import com.vetsmart.dto.AuthDto;
-import com.vetsmart.repository.UserRepository;
+import com.vetsmart.persistance.repository.UserRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Base64;

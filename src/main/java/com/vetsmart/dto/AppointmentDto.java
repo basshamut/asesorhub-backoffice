@@ -4,15 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OwnerResponseDto {
-
-    private Long id;
-    private String name;
-    private String phone;
-    private String email;
-    private String address;
+public class AppointmentDto {
+    private Date date;
+    private String reason;
 }
-
