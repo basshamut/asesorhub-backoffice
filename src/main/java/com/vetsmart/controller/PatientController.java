@@ -48,6 +48,9 @@ public class PatientController {
         }
     }
 
+    /* TODO
+    *    Refactorizar usando /api/patients?ownerId={ownerId}. Lo ideal es meter el filtro en getPatients
+    *  */
     @GetMapping("/owners/{email}")
     public ResponseEntity<Set<PatientDto>> findByEmail(@PathVariable String email) {
         try {
