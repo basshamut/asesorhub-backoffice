@@ -35,15 +35,12 @@ public class SecurityConfig {
     private CustomAuthenticationProvider customAuthenticationProvider;
 
     private final String[] WHITE_LIST = {
-            "/**",
             "/swagger*/**",
             "/v3/api-docs/**",
-            "/console/**",
             "/error",
             API_VERSION_PATH + LOGIN_PATH
     };
 
-    // Configuring HttpSecurity //TODO revisar autenticacion
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -61,7 +58,6 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilter(getJwtAuthorizationFilter())
         ;
-        http.headers().frameOptions().disable(); // Allow H2 console (if needed for development)
         return http.build();
     }
 
