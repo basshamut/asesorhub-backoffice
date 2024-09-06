@@ -2,6 +2,7 @@ package com.vetsmart.config.security;
 
 import com.vetsmart.config.security.jwt.JWTAuthorizationFilter;
 import com.vetsmart.config.security.provider.CustomAuthenticationProvider;
+import com.vetsmart.exception.MvcRequestMatcherConfigurationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,7 +54,7 @@ public class SecurityConfig {
                             auth.requestMatchers(new MvcRequestMatcher(introspector, pattern)).permitAll();
                         }
                     } catch (Exception e) {
-                        throw new RuntimeException("Failed to configure MVC request matchers", e);
+                        throw new MvcRequestMatcherConfigurationException("Failed to configure MVC request matchers", e);
                     }
                     auth.anyRequest().authenticated();
                 })
