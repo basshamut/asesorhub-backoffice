@@ -2,8 +2,10 @@ package com.vetsmart.controller;
 
 import com.vetsmart.dto.OwnerRequestDto;
 import com.vetsmart.dto.OwnerResponseDto;
+import com.vetsmart.exception.ServiceException;
 import com.vetsmart.repository.Owner;
 import com.vetsmart.service.OwnerService;
+import com.vetsmart.utils.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +28,12 @@ public class OwnerController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<OwnerResponseDto>> getAllOwners(Pageable pageable) {
+    public ResponseEntity<Page<OwnerResponseDto>> getAllOwners(@RequestParam int page, @RequestParam int size) {
+        if (!ControllerUtils.isValidPagination(page, size)) {
+            throw new ServiceException("Invalid pagination parameters", HttpStatus.BAD_REQUEST.value());
+        }
+
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
         Page<OwnerResponseDto> owners = ownerService.getAllOwners(pageable);
         return new ResponseEntity<>(owners, HttpStatus.OK);
     }
