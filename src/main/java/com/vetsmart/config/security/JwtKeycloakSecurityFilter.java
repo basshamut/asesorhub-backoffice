@@ -34,41 +34,25 @@ public class JwtKeycloakSecurityFilter implements Filter {//TODO agregar el cont
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
         try {
-
             String authorizationHeader = ((HttpServletRequest) request).getHeader("Authorization");
             String token = authorizationHeader.substring(7);
-
             DecodedJWT decodedJWT = JWT.decode(token);
-
             Jwk jwk = jwkProvider.get(decodedJWT.getKeyId());
-
             Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
-
             JWTVerifier verifier = JWT.require(algorithm)
                     .withIssuer("http://localhost:9090/realms/external-test")
-                    //.withAudience("backend-api")
-                    //.withClaim("role", "ADMIN")
-                    //.withSubject("admin")
                     .build();
             verifier.verify(decodedJWT);
-
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(decodedJWT.getSubject(), "***",
                             List.of(new SimpleGrantedAuthority("SIMPLE_AUTHORITY"))));
-
-
         } catch (JWTVerificationException jwtVerificationException) {
             logger.error("Verification Exception", jwtVerificationException);
         } catch (Exception e) {
             logger.error("Exception", e);
         }
-
-
         chain.doFilter(request, response);
-
         SecurityContextHolder.clearContext();
-
     }
 }
