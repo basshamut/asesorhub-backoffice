@@ -1,4 +1,4 @@
-package com.vetsmart.cucumber.config;
+package com.asesorhub.cucumber.config;
 
 import io.cucumber.junit.platform.engine.Cucumber;
 import org.junit.platform.suite.api.SelectClasspathResource;

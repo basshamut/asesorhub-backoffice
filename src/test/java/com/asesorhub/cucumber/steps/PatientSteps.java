@@ -1,8 +1,8 @@
-package com.vetsmart.cucumber.steps;
+package com.asesorhub.cucumber.steps;
 
-import com.vetsmart.controller.PatientController;
-import com.vetsmart.cucumber.config.CucumberSpringConfiguration;
-import com.vetsmart.dto.PatientDto;
+import com.asesorhub.controller.PatientController;
+import com.asesorhub.cucumber.config.CucumberSpringConfiguration;
+import com.asesorhub.dto.PatientDto;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;

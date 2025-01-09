@@ -1,4 +1,4 @@
-package com.vetsmart.cucumber.config;
+package com.asesorhub.cucumber.config;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;

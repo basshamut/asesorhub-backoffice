@@ -1,10 +1,7 @@
 package com.asesorhub.controller;
 
-import com.asesorhub.dto.OwnerRequestDto;
 import com.asesorhub.dto.PatientDto;
-import com.asesorhub.dto.PatientResponseDto;
 import com.asesorhub.exception.ServiceException;
-import com.asesorhub.persistance.repository.Owner;
 import com.asesorhub.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
