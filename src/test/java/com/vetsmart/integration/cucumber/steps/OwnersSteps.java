@@ -1,13 +1,13 @@
-package com.vetsmart.integration.cucumber.steps;
+package com.asesorhub.integration.cucumber.steps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vetsmart.controller.OwnerController;
-import com.vetsmart.dto.OwnerResponseDto;
+import com.asesorhub.controller.OwnerController;
+import com.asesorhub.dto.OwnerResponseDto;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import com.vetsmart.integration.cucumber.config.CucumberSpringConfiguration;
+import com.asesorhub.integration.cucumber.config.CucumberSpringConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
