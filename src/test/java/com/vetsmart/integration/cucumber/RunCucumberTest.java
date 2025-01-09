@@ -1,4 +1,4 @@
-package com.vetsmart.integration.cucumber;
+package com.asesorhub.integration.cucumber;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
