@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class ExceptionLoggingAspect {
-    @AfterThrowing(pointcut = "execution(* org.demo.controller.*.*(..))", throwing = "ex")
+    @AfterThrowing(pointcut = "execution(* com.controller.*.*(..))", throwing = "ex")
     public void logException(Exception ex) {
         if (ex instanceof ServiceException serviceException) {
             if (serviceException.getCode() == 400 && serviceException.getMessage().contains("greater than 0")) {

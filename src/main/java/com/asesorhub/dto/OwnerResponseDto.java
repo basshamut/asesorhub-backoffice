@@ -7,9 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OwnerDTO {
+public class OwnerResponseDto {
+
+    private String id;
     private String name;
-    private String email;
     private String phone;
+    private String email;
     private String address;
 }
