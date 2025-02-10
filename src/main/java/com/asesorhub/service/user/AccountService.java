@@ -109,4 +109,13 @@ public class AccountService {
     public void deleteById(String id) {
         accountRepository.deleteById(id);
     }
+
+    public void assignAccountType(String email, AccountType type) {
+        var user = accountRepository.findByEmail(email);
+        if (Objects.isNull(user)) {
+            throw new ServiceException("User not found", HttpStatus.NOT_FOUND.value());
+        }
+
+        accountCustomRepository.applyAccountType(user, type);
+    }
 }

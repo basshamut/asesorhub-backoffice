@@ -1,5 +1,7 @@
 package com.asesorhub.persistance.repository.account;
 
+import com.asesorhub.exception.ServiceException;
+import com.asesorhub.utils.enums.AccountType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -7,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.MultiValueMap;
 
@@ -51,5 +54,22 @@ public class AccountCustomRepository {
         long count = mongoTemplate.count(query.skip(0).limit(0), Account.class);
 
         return new PageImpl<>(accounts, pageable, count);
+    }
+
+    public void applyAccountType(Account user, AccountType type) {
+        if (type.equals(AccountType.ADVISOR)) {
+            if (user.getIsAdvisor()) {
+                throw new ServiceException("Advisor type it was already assigned", HttpStatus.BAD_REQUEST.value());
+            }
+            user.setIsAdvisor(true);
+        }
+        if (type.equals(AccountType.ADVISEE)) {
+            if (user.getIsAdvisee()) {
+                throw new ServiceException("Advisee type it was already assigned", HttpStatus.BAD_REQUEST.value());
+            }
+            user.setIsAdvisee(true);
+        }
+
+        mongoTemplate.save(user);
     }
 }
