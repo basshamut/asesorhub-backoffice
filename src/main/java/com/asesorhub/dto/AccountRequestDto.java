@@ -16,4 +16,5 @@ public class AccountRequestDto {
     private String phone;
     private String username;
     private String password;
+    private Boolean isActive;
 }

@@ -66,8 +66,8 @@ public class AccountController {
         return ResponseEntity.ok().body(user);
     }
 
-    @PutMapping("/accounts/{email}")
-    public ResponseEntity<Void> assignAccountType(@RequestParam("type")AccountType type, @PathVariable String email) {
+    @PutMapping("/accounts")
+    public ResponseEntity<Void> assignAccountType(@RequestParam("type")AccountType type, @RequestParam("email") String email) {
         accountService.assignAccountType(email, type);
         return ResponseEntity.ok().build();
     }

@@ -98,9 +98,10 @@ public class AccountService {
 
     public AccountResponseDto updateById(String id, AccountRequestDto advisorDetails) {
         return accountRepository.findById(id).map(advisor -> {
-            advisor.setName(advisorDetails.getName());
-            advisor.setPhone(advisorDetails.getPhone());
-            advisor.setEmail(advisorDetails.getUsername());
+            advisor.setName(advisorDetails.getName() != null ? advisorDetails.getName() : advisor.getName());
+            advisor.setPhone(advisorDetails.getPhone() != null ? advisorDetails.getPhone() : advisor.getPhone());
+            advisor.setIsActive(advisorDetails.getIsActive() != null ? advisorDetails.getIsActive() : advisor.getIsActive());
+            advisor.setUpdatedAt(new Date());
             var updatedAdvisor = accountRepository.save(advisor);
             return AccountMapper.MAPPER.mapToDto(updatedAdvisor);
         }).orElseThrow(() -> new ServiceException("Advisor not found", HttpStatus.NOT_FOUND.value()));
