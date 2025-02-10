@@ -73,13 +73,13 @@ public class AccountController {
     }
 
     @PutMapping("/accounts/{id}")
-    public ResponseEntity<AccountResponseDto> updateById(@PathVariable String id, @RequestBody AccountRequestDto accountRequestDto) {
+    public ResponseEntity<AccountResponseDto> updateById(@PathVariable("id") String id, @RequestBody AccountRequestDto accountRequestDto) {
         var updatedAdvisee = accountService.updateById(id, accountRequestDto);
         return new ResponseEntity<>(updatedAdvisee, HttpStatus.OK);
     }
 
     @DeleteMapping("/accounts/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable String id) {
+    public ResponseEntity<Void> deleteById(@PathVariable("id") String id) {
         accountService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -106,7 +106,7 @@ public class AccountController {
     }
 
     @GetMapping("/accounts/{id}")
-    public ResponseEntity<AccountResponseDto> findById(@PathVariable String id) {
+    public ResponseEntity<AccountResponseDto> findById(@PathVariable("id") String id) {
         var advisee = accountService.getById(id);
         return new ResponseEntity<>(advisee, HttpStatus.OK);
     }
