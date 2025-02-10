@@ -1,4 +1,4 @@
-package com.asesorhub.service;
+package com.asesorhub.service.user;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

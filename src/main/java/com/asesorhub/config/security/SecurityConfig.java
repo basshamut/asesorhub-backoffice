@@ -3,6 +3,7 @@ package com.asesorhub.config.security;
 import com.asesorhub.config.security.jwt.JWTAuthorizationFilter;
 import com.asesorhub.config.security.provider.CustomAuthenticationProvider;
 import com.asesorhub.exception.MvcRequestMatcherConfigurationException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,22 +23,23 @@ import java.util.Collections;
 
 import static com.asesorhub.utils.Constants.API_VERSION_PATH;
 import static com.asesorhub.utils.Constants.LOGIN_PATH;
+import static com.asesorhub.utils.Constants.LOGIN_URL;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private CustomAuthenticationProvider customAuthenticationProvider;
+    private final PasswordEncoder passwordEncoder;
+    private final CustomAuthenticationProvider customAuthenticationProvider;
 
     private final String[] WHITE_LIST = {
             "/swagger*/**",
             "/v3/api-docs/**",
             "/error",
-            API_VERSION_PATH + LOGIN_PATH
+            LOGIN_URL,
+            API_VERSION_PATH + "/accounts"
     };
 
     @Bean
