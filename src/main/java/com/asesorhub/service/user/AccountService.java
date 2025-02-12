@@ -108,7 +108,13 @@ public class AccountService {
     }
 
     public void deleteById(String id) {
-        accountRepository.deleteById(id);
+        var advisor = accountRepository.findById(id);
+        if (advisor.isPresent()) {
+            advisor.get().setIsActive(false);
+            accountRepository.save(advisor.get());
+        } else {
+            throw new ServiceException("Advisor not found", HttpStatus.NOT_FOUND.value());
+        }
     }
 
     public void assignAccountType(String email, AccountType type) {
