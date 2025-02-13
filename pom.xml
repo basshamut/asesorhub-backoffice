@@ -35,12 +35,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring.boot.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.webjars</groupId>
-                    <artifactId>webjars-locator-core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Springdoc OpenAPI -->
@@ -142,6 +136,13 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- WebJars Locator Core -->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-locator-core</artifactId>
+            <version>${webjars-locator.version}</version>
         </dependency>
 
         <!-- ClassGraph -->

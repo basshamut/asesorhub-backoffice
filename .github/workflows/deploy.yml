@@ -43,7 +43,7 @@ jobs:
           source: "asesorhub-backoffice.tar"
           target: "/home/${{ secrets.VPS_SSH_USERNAME }}/"
 
-      # 7. Conectarse vía SSH para cargar la imagen y ejecutar el contenedor Docker
+      # 7. Conectarse vía SSH para limpiar, cargar la imagen y ejecutar el contenedor Docker
       - name: Deploy Docker Container via SSH
         uses: appleboy/ssh-action@v0.1.0
         with:
@@ -52,11 +52,13 @@ jobs:
           password: ${{ secrets.VPS_SSH_PASSWORD }}
           port: 22
           script: |
-            # Cargar la imagen Docker desde el tarball
-            docker load -i /home/${{ secrets.VPS_SSH_USERNAME }}/asesorhub-backoffice.tar
-
-            # Detener y eliminar cualquier contenedor existente con el mismo nombre
+            # Eliminar cualquier contenedor existente con el mismo nombre
             docker rm -f asesorhub-backoffice || true
+            # Eliminar la imagen existente con el mismo tag (si existe)
+            docker rmi -f asesorhub-backoffice:latest || true
+
+            # Cargar la nueva imagen Docker desde el tarball
+            docker load -i /home/${{ secrets.VPS_SSH_USERNAME }}/asesorhub-backoffice.tar
 
             # Ejecutar el contenedor con las variables de entorno y mapeo de puertos
             docker run -d \
