@@ -3,3 +3,6 @@ server:
 spring:
   profiles:
     active: ${PROFILE_ACTIVE:local}
+  web:
+    resources:
+      add-mappings: false
