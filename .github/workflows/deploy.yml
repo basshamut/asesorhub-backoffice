@@ -51,23 +51,23 @@ jobs:
 
             # Crear o actualizar el archivo de servicio systemd para asesorhub-backoffice
             sudo bash -c "cat << EOF > /etc/systemd/system/asesorhub-backoffice.service
-  [Unit]
-  Description=Servicio AsesorHub Backoffice
-  After=network.target
-  
-  [Service]
-  User=${{ secrets.VPS_SSH_USERNAME }}
-  WorkingDirectory=/home/${{ secrets.VPS_SSH_USERNAME }}/app
-  ExecStart=/usr/bin/java -jar /home/${{ secrets.VPS_SSH_USERNAME }}/app/app.jar
-  SuccessExitStatus=143
-  Restart=always
-  RestartSec=10
-  
-  [Install]
-  WantedBy=multi-user.target
-  EOF"
-  
-  # Recargar systemd, habilitar y reiniciar el servicio
-  sudo systemctl daemon-reload
-  sudo systemctl enable asesorhub-backoffice
-  sudo systemctl restart asesorhub-backoffice
+            [Unit]
+            Description=Servicio AsesorHub Backoffice
+            After=network.target
+            
+            [Service]
+            User=${{ secrets.VPS_SSH_USERNAME }}
+            WorkingDirectory=/home/${{ secrets.VPS_SSH_USERNAME }}/app
+            ExecStart=/usr/bin/java -jar /home/${{ secrets.VPS_SSH_USERNAME }}/app/app.jar
+            SuccessExitStatus=143
+            Restart=always
+            RestartSec=10
+            
+            [Install]
+            WantedBy=multi-user.target
+            EOF"
+            
+            # Recargar systemd, habilitar y reiniciar el servicio
+            sudo systemctl daemon-reload
+            sudo systemctl enable asesorhub-backoffice
+            sudo systemctl restart asesorhub-backoffice
