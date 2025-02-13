@@ -7,6 +7,7 @@ import com.asesorhub.exception.ServiceException;
 import com.asesorhub.persistance.repository.account.AccountCustomRepository;
 import com.asesorhub.service.user.mapper.AccountMapper;
 import com.asesorhub.utils.ControllerUtils;
+import com.asesorhub.utils.PasswordUtils;
 import com.asesorhub.utils.enums.AccountType;
 import lombok.AllArgsConstructor;
 import com.asesorhub.dto.AuthDto;
@@ -30,7 +31,7 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final AccountCustomRepository accountCustomRepository;
-    private final PasswordEncoderConfig passwordEncoderConfig;
+    private final PasswordUtils passwordUtils;
 
     public AuthDto loadUserByUsername(String username) {
         //TODO enchufar aqui Auth0
@@ -52,7 +53,7 @@ public class AccountService {
         var user = accountRepository.findByEmail(accountRequestDto.getUsername());
 
         if (Objects.isNull(user)) {
-            var passInBase64 = buildPassword(accountRequestDto);
+            var passInBase64 = passwordUtils.buildPassword(accountRequestDto.getPassword());
 
             var newUser = AccountMapper.MAPPER.mapToEntity(accountRequestDto);
             newUser.setPassword(passInBase64);
@@ -68,12 +69,6 @@ public class AccountService {
         }
 
         throw new ServiceException("User already exists", 400);
-    }
-
-    private String buildPassword(AccountRequestDto accountRequestDto) {
-        var passDecoded = new String(Base64.getDecoder().decode(accountRequestDto.getPassword()));
-        var passEncripted = passwordEncoderConfig.passwordEncoder().encode(passDecoded);
-        return Base64.getEncoder().encodeToString(passEncripted.getBytes());
     }
 
     public Page<AccountResponseDto> getWithFilters(MultiValueMap<String, String> params) {
