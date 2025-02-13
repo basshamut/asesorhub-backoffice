@@ -1,0 +1,73 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout del repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Configurar Java 21 (usando Temurin)
+      - name: Set up Java 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # 3. Compilar la aplicación con Maven (omitiendo tests)
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      # 4. Copiar el JAR generado a la VPS mediante SCP
+      - name: Copy JAR to VPS
+        uses: appleboy/scp-action@v0.1.0
+        with:
+          host: ${{ secrets.VPS_SSH_HOST }}
+          username: ${{ secrets.VPS_SSH_USERNAME }}
+          password: ${{ secrets.VPS_SSH_PASSWORD }}
+          port: 22
+          source: "target/asesorhub-backoffice-1.0-SNAPSHOT.jar"
+          target: "/home/${{ secrets.VPS_SSH_USERNAME }}/app/app.jar"
+
+      # 5. Conectarse vía SSH para actualizar el archivo .env, crear/actualizar el servicio systemd y reiniciar la aplicación
+      - name: Deploy Application via SSH
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.VPS_SSH_HOST }}
+          username: ${{ secrets.VPS_SSH_USERNAME }}
+          password: ${{ secrets.VPS_SSH_PASSWORD }}
+          port: 22
+          script: |
+            # Actualizar o crear el archivo .env con los valores de los secrets
+            echo "PROFILE_ACTIVE=${{ secrets.PROFILE_ACTIVE }}" > /home/${{ secrets.VPS_SSH_USERNAME }}/app/.env
+            echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" >> /home/${{ secrets.VPS_SSH_USERNAME }}/app/.env
+            echo "MONGODB_TEST_URL=${{ secrets.MONGODB_TEST_URL }}" >> /home/${{ secrets.VPS_SSH_USERNAME }}/app/.env
+
+            # Crear o actualizar el archivo de servicio systemd para asesorhub-backoffice
+            sudo bash -c "cat << EOF > /etc/systemd/system/asesorhub-backoffice.service
+  [Unit]
+  Description=Servicio AsesorHub Backoffice
+  After=network.target
+  
+  [Service]
+  User=${{ secrets.VPS_SSH_USERNAME }}
+  WorkingDirectory=/home/${{ secrets.VPS_SSH_USERNAME }}/app
+  ExecStart=/usr/bin/java -jar /home/${{ secrets.VPS_SSH_USERNAME }}/app/app.jar
+  SuccessExitStatus=143
+  Restart=always
+  RestartSec=10
+  
+  [Install]
+  WantedBy=multi-user.target
+  EOF"
+  
+  # Recargar systemd, habilitar y reiniciar el servicio
+  sudo systemctl daemon-reload
+  sudo systemctl enable asesorhub-backoffice
+  sudo systemctl restart asesorhub-backoffice
