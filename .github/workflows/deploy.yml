@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy to Docker on VPS
 
 on:
   push:
@@ -24,19 +24,27 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      # 4. Copiar el JAR generado a la VPS mediante SCP
-      - name: Copy JAR to VPS
+      # 4. Construir la imagen Docker (se espera que tengas un Dockerfile en el repositorio)
+      - name: Build Docker image
+        run: docker build -t asesorhub-backoffice:latest .
+
+      # 5. Guardar la imagen Docker en un tarball
+      - name: Save Docker image as tarball
+        run: docker save asesorhub-backoffice:latest > asesorhub-backoffice.tar
+
+      # 6. Copiar el tarball con la imagen a la VPS
+      - name: Copy Docker image tarball to VPS
         uses: appleboy/scp-action@v0.1.0
         with:
           host: ${{ secrets.VPS_SSH_HOST }}
           username: ${{ secrets.VPS_SSH_USERNAME }}
           password: ${{ secrets.VPS_SSH_PASSWORD }}
           port: 22
-          source: "target/asesorhub-backoffice-1.0-SNAPSHOT.jar"
-          target: "/home/${{ secrets.VPS_SSH_USERNAME }}/app/app.jar"
+          source: "asesorhub-backoffice.tar"
+          target: "/home/${{ secrets.VPS_SSH_USERNAME }}/"
 
-      # 5. Conectarse vía SSH para actualizar el archivo .env, crear/actualizar el servicio systemd y reiniciar la aplicación
-      - name: Deploy Application via SSH
+      # 7. Conectarse vía SSH para cargar la imagen y ejecutar el contenedor Docker
+      - name: Deploy Docker Container via SSH
         uses: appleboy/ssh-action@v0.1.0
         with:
           host: ${{ secrets.VPS_SSH_HOST }}
@@ -44,30 +52,17 @@ jobs:
           password: ${{ secrets.VPS_SSH_PASSWORD }}
           port: 22
           script: |
-            # Actualizar o crear el archivo .env con los valores de los secrets
-            echo "PROFILE_ACTIVE=${{ secrets.PROFILE_ACTIVE }}" > /home/${{ secrets.VPS_SSH_USERNAME }}/app/.env
-            echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" >> /home/${{ secrets.VPS_SSH_USERNAME }}/app/.env
-            echo "MONGODB_TEST_URL=${{ secrets.MONGODB_TEST_URL }}" >> /home/${{ secrets.VPS_SSH_USERNAME }}/app/.env
+            # Cargar la imagen Docker desde el tarball
+            docker load -i /home/${{ secrets.VPS_SSH_USERNAME }}/asesorhub-backoffice.tar
 
-            # Crear o actualizar el archivo de servicio systemd para asesorhub-backoffice
-            sudo bash -c "cat << EOF > /etc/systemd/system/asesorhub-backoffice.service
-            [Unit]
-            Description=Servicio AsesorHub Backoffice
-            After=network.target
-            
-            [Service]
-            User=${{ secrets.VPS_SSH_USERNAME }}
-            WorkingDirectory=/home/${{ secrets.VPS_SSH_USERNAME }}/app
-            ExecStart=/usr/bin/java -jar /home/${{ secrets.VPS_SSH_USERNAME }}/app/app.jar
-            SuccessExitStatus=143
-            Restart=always
-            RestartSec=10
-            
-            [Install]
-            WantedBy=multi-user.target
-            EOF"
-            
-            # Recargar systemd, habilitar y reiniciar el servicio
-            sudo systemctl daemon-reload
-            sudo systemctl enable asesorhub-backoffice
-            sudo systemctl restart asesorhub-backoffice
+            # Detener y eliminar cualquier contenedor existente con el mismo nombre
+            docker rm -f asesorhub-backoffice || true
+
+            # Ejecutar el contenedor con las variables de entorno y mapeo de puertos
+            docker run -d \
+              --name asesorhub-backoffice \
+              -p 8080:8080 \
+              -e PROFILE_ACTIVE="${{ secrets.PROFILE_ACTIVE }}" \
+              -e MONGODB_URL="${{ secrets.MONGODB_URL }}" \
+              -e MONGODB_TEST_URL="${{ secrets.MONGODB_TEST_URL }}" \
+              asesorhub-backoffice:latest
