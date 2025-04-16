@@ -1,5 +1,10 @@
 server:
   port: 8080
+  servlet:
+    context-path: /asesorhub
 spring:
   profiles:
-    active: des
+    active: ${PROFILE_ACTIVE:local}
+  web:
+    resources:
+      add-mappings: false

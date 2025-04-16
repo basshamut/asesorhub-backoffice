@@ -1,0 +1,70 @@
+name: Deploy to Docker on VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      - name: Build Docker image
+        run: docker build -t asesorhub-backoffice:latest .
+
+      - name: Save Docker image as tarball
+        run: docker save asesorhub-backoffice:latest > asesorhub-backoffice.tar
+
+      # 🔐 Descifrar clave privada SSH
+      - name: Decrypt SSH private key
+        run: |
+          gpg --batch --yes --passphrase "${{ secrets.GPG_PASSPHRASE }}" \
+            -o ./private_key -d .github/secrets/secrets.gpg
+          chmod 600 ./private_key
+
+      # ✅ Validar que los secretos críticos existan
+      - name: Validar existencia de secretos requeridos
+        run: |
+          if [ -z "${{ secrets.VPS_SSH_USERNAME }}" ] || [ -z "${{ secrets.VPS_SSH_HOST }}" ] || [ -z "${{ secrets.ENV_FILE }}" ]; then
+            echo "❌ Faltan uno o más secretos obligatorios."
+            exit 1
+          fi
+
+      # 📦 Copiar imagen manualmente al VPS
+      - name: Copy Docker image tarball manually using scp
+        run: |
+          scp -i ./private_key -o StrictHostKeyChecking=no \
+            asesorhub-backoffice.tar \
+            ${{ secrets.VPS_SSH_USERNAME }}@${{ secrets.VPS_SSH_HOST }}:/home/${{ secrets.VPS_SSH_USERNAME }}/
+
+      # 🚀 Desplegar en el VPS manualmente
+      - name: Deploy Docker container manually
+        run: |
+          ssh -i ./private_key -o StrictHostKeyChecking=no ${{ secrets.VPS_SSH_USERNAME }}@${{ secrets.VPS_SSH_HOST }} << 'EOF'
+            docker rm -f asesorhub-backoffice || true
+            docker rmi -f asesorhub-backoffice:latest || true
+            echo "${{ secrets.ENV_FILE }}" > /home/${{ secrets.VPS_SSH_USERNAME }}/.env
+            docker load -i /home/${{ secrets.VPS_SSH_USERNAME }}/asesorhub-backoffice.tar
+            docker run -d \
+              --name asesorhub-backoffice \
+              -p 8081:8080 \
+              --env-file /home/${{ secrets.VPS_SSH_USERNAME }}/.env \
+              asesorhub-backoffice:latest
+          EOF
+
+      # 🗑️ Limpiar clave privada
+      - name: Cleanup private key
+        if: always()
+        run: rm -f ./private_key

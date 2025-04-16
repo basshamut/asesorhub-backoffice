@@ -1,6 +1,6 @@
 package com.asesorhub.config.security.provider;
 
-import com.asesorhub.service.UserService;
+import com.asesorhub.service.user.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
@@ -33,7 +33,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private CacheManager cacheManagerLogin;
 
     @Autowired
-    private UserService userService;
+    private AccountService accountService;
 
     @Override
     public Authentication authenticate(Authentication authentication) {
@@ -43,7 +43,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         checkIfNumberOfPossibleAttemptsReached(attemps);
 
-        var user = userService.loadUserByUsername(username);
+        var user = accountService.loadUserByUsername(username);
 
         if (user != null) {
             var apiPass = new String(Base64.getDecoder().decode((String) authentication.getCredentials()));

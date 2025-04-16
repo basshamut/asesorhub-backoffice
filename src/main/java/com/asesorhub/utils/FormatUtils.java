@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 @Slf4j
 public class FormatUtils {
 
-    private FormatUtils(){}
+    private FormatUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static HttpErrorInfoJson httpErrorInfoFormatted(HttpStatus status, HttpServletRequest request, Exception ex){
         final String path = request.getRequestURI();

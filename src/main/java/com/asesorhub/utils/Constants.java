@@ -1,12 +1,11 @@
 package com.asesorhub.utils;
 
 public class Constants {
-    public static final String API_VERSION_PATH = "/v1";
+    public static final String API_VERSION_PATH = "/api/v1";
 
     //Auth
-    public static final String AUTH_PATH = "/auth";
     public static final String LOGIN_PATH = "/login";
-    public static final String LOGIN_URL = API_VERSION_PATH + AUTH_PATH + LOGIN_PATH;
+    public static final String LOGIN_URL = API_VERSION_PATH + LOGIN_PATH;
 
     //Cache
     public static final String LOGIN_ATTEMPTS_CACHE = "loginAttempts";

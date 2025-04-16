@@ -23,7 +23,7 @@ public class OpenApi30Config {
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("bearerAuth",
                         new io.swagger.v3.oas.models.security.SecurityScheme().type(io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
-                .info(new io.swagger.v3.oas.models.info.Info().title("Vet Smart Backoffice").version("v1"))
+                .info(new io.swagger.v3.oas.models.info.Info().title("AsesorHub Backoffice").version("v1"))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth", Arrays.asList("read", "write")));
     }
 }

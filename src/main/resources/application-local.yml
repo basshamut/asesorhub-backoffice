@@ -6,7 +6,6 @@ spring:
   data:
     mongodb:
       uri: ${MONGODB_URL}
-
   web:
     resources:
       add-mappings: true
