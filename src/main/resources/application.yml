@@ -1,7 +1,7 @@
 server:
   port: 8080
   servlet:
-    context-path: /asesorhub
+    context-path: /asesorhub-backoffice
 spring:
   profiles:
     active: ${PROFILE_ACTIVE:local}
